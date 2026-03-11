@@ -1,95 +1,131 @@
-<a name="readme-top"></a>
+# SillyTavern for iOS
 
-![][cover]
+> A fork of [SillyTavern](https://github.com/SillyTavern/SillyTavern) with a full native iOS port — runs the complete SillyTavern backend **on-device**, no server required.
 
-<div align="center">
-
-English | [German](readme-de_de.md) | [中文](readme-zh_cn.md) | [繁體中文](readme-zh_tw.md) | [日本語](readme-ja_jp.md) | [Русский](readme-ru_ru.md) | [한국어](readme-ko_kr.md)
-
-[![GitHub Stars](https://img.shields.io/github/stars/SillyTavern/SillyTavern.svg)](https://github.com/SillyTavern/SillyTavern/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/SillyTavern/SillyTavern.svg)](https://github.com/SillyTavern/SillyTavern/forks)
-[![GitHub Issues](https://img.shields.io/github/issues/SillyTavern/SillyTavern.svg)](https://github.com/SillyTavern/SillyTavern/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/SillyTavern/SillyTavern.svg)](https://github.com/SillyTavern/SillyTavern/pulls)
-
-</div>
+[![iOS 15+](https://img.shields.io/badge/iOS-15%2B-blue?logo=apple)](ios-app/)
+[![Node.js 18](https://img.shields.io/badge/Node.js-18-green?logo=node.js)](ios-app/nodejs-project/)
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-orange)](LICENSE)
 
 ---
 
-SillyTavern provides a single unified interface for many LLM APIs (KoboldAI/CPP, Horde, NovelAI, Ooba, Tabby, OpenAI, OpenRouter, Claude, Mistral and more), a mobile-friendly layout, Visual Novel Mode, Automatic1111 & ComfyUI API image generation integration, TTS, WorldInfo (lorebooks), customizable UI, auto-translate, more prompt options than you'd ever want or need, and endless growth potential via third-party extensions.
+## What is this?
 
-We have a [Documentation website](https://docs.sillytavern.app/) to answer most of your questions and help you get started.
+This fork ports SillyTavern to run natively on iPhone and iPad. The full Node.js backend runs on-device using [nodejs-mobile](https://github.com/nodejs-mobile/nodejs-mobile), so you can use SillyTavern anywhere — no Mac, no server, no Wi-Fi needed (as long as your AI API works).
 
-## What is SillyTavern?
+**Supported devices:** iPhone and iPad  
+**Minimum iOS:** 15.0  
+**SillyTavern version:** stays in sync with upstream
 
-SillyTavern (or ST for short) is a locally installed user interface that allows you to interact with text generation LLMs, image generation engines, and TTS voice models.
+---
 
-Beginning in February 2023 as a fork of TavernAI 1.2.8, SillyTavern now has over 300 contributors and 3 years of independent development under its belt, and continues to serve as a leading software for savvy AI hobbyists.
+## Features
 
-## Our Vision
+- ✅ Full SillyTavern experience on iOS
+- ✅ Runs entirely on-device — no external server
+- ✅ All AI APIs supported (OpenAI, Anthropic, Google, Mistral, local, etc.)
+- ✅ Character cards, lorebooks, presets — everything syncs to your Files app
+- ✅ Data persists in Files app → SillyTavern folder (accessible outside the app)
+- ⚠️ No JIT (Apple restriction) — slower than desktop, but fully functional
+- ⚠️ No local AI models (no transformers, captioning, TTS/STT)
 
-1. We aim to empower users with as much utility and control over their LLM prompts as possible. The steep learning curve is part of the fun!
-2. We do not provide any online or hosted services, nor programmatically track any user data.
-3. SillyTavern is a passion project brought to you by a dedicated community of LLM enthusiasts, and will always be free and open sourced.
+---
 
-## Do I need a powerful PC to run SillyTavern?
+## For Users — Installing the App
 
-The hardware requirements are minimal: it will run on anything that can run NodeJS 18 or higher. If you intend to do LLM inference on your local machine, we recommend a 3000-series NVIDIA graphics card with at least 6GB of VRAM, but actual requirements may vary depending on the model and backend you choose to use.
+> You will need Xcode and an Apple ID (free) to sideload. A paid Apple Developer account ($99/yr) removes the 7-day re-signing requirement.
 
-## Questions or suggestions?
+### Prerequisites
 
-### Discord server
+- macOS with Xcode 15+
+- iPhone or iPad running iOS 15+
+- Apple ID (free account works)
 
-| [![][discord-shield-badge]][discord-link] | [Join our Discord community!](https://discord.gg/sillytavern) Get support, share favorite characters and prompts. |
-| :---------------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
+### Quick install
 
-Or get in touch with the developers directly:
+```bash
+# 1. Clone this repo
+git clone https://github.com/elouannd/SillyTavern-iOS.git
+cd SillyTavern-iOS/ios-app
 
-* Discord: cohee, rossascends, wolfsblvt
-* Reddit: [/u/RossAscends](https://www.reddit.com/user/RossAscends/), [/u/sillylossy](https://www.reddit.com/user/sillylossy/), [u/Wolfsblvt](https://www.reddit.com/user/Wolfsblvt/)
-* [Post a GitHub issue](https://github.com/SillyTavern/SillyTavern/issues)
+# 2. Install dependencies and build the iOS bundle
+npm install
+bash scripts/prepare-ios.sh
 
-### I like your project! How do I contribute?
+# 3. Open in Xcode
+open ios/App/App.xcodeproj
+```
 
-1. Send pull requests. Learn how to contribute: [CONTRIBUTING.md](../CONTRIBUTING.md)
-2. Send feature suggestions and issue reports using the provided templates.
-3. Read this entire readme file and check the documentation website first, to avoid sending duplicate issues.
+Then in Xcode:
+1. Select your device in the toolbar
+2. Go to **Signing & Capabilities** → set your Team to your Apple ID
+3. Hit **Run** (▶)
 
-## Screenshots
+**First launch is slow** — Node.js parses a 14MB bundle without JIT. Budget 1–3 minutes. Subsequent launches are fast (~1–2s).
 
-<img width="500" alt="image" src="https://github.com/user-attachments/assets/9b5f32f0-c3b3-4102-b3f5-0e9213c0f50f">
-<img width="500" alt="image" src="https://github.com/user-attachments/assets/913fdbaa-7d33-42f1-ae2c-89dca41c53d1">
+---
 
-## Installation
+## For Developers — Project Structure
 
-For detailed installation instructions, please visit our documentation:
+```
+SillyTavern-iOS/
+├── src/                        ← SillyTavern backend (upstream)
+├── public/                     ← SillyTavern frontend (upstream)
+│   ├── scripts/ios-init.js     ← iOS-specific frontend init
+│   └── css/ios-overrides.css   ← iOS layout fixes
+└── ios-app/
+    ├── nodejs-project/         ← Node.js project copied to device
+    │   ├── server-ios.js       ← iOS entry point (replaces server.js)
+    │   └── server-ios-entry.js ← esbuild entry shim
+    ├── nodejs-project-deploy/  ← What Xcode copies to the bundle
+    ├── scripts/
+    │   ├── prepare-ios.sh      ← Full build pipeline
+    │   └── bundle-server.mjs   ← esbuild config
+    └── ios/App/App/
+        ├── AppDelegate.swift               ← Bundle path config
+        └── SillyTavernViewController.swift ← Loading overlay + polling
+```
 
-* **[Windows Installation Guide](https://docs.sillytavern.app/installation/windows/)**
-* **[MacOS/Linux Installation Guide](https://docs.sillytavern.app/installation/linuxmacos/)**
-* **[Android (Termux) Installation Guide](https://docs.sillytavern.app/installation/android-(termux)/)**
-* **[Docker Installation Guide](https://docs.sillytavern.app/installation/docker/)**
+### How it works
 
-## License and credits
+1. **`prepare-ios.sh`** bundles the SillyTavern backend with esbuild into `server-bundle.mjs` (~14MB) and pre-builds `lib.js` with webpack
+2. **Xcode** copies everything into the app bundle
+3. **On launch**, `AppDelegate` writes bundle paths to `st_config.json`
+4. **nodejs-mobile** starts `server-ios.js` which imports `server-bundle.mjs`
+5. **SillyTavernViewController** polls `localhost:8000` and loads the WebView when the server is ready
 
-**This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.**
+### Building after upstream updates
 
-* [TavernAI](https://github.com/TavernAI/TavernAI) 1.2.8 by Humi: MIT License
-* Portions of CncAnon's TavernAITurbo mod used with permission
-* Visual Novel Mode inspired by the work of PepperTaco (<https://github.com/peppertaco/Tavern/>)
-* Noto Sans font by Google (OFL license)
-* Lexer/Parser by Chevrotain (Apache-2.0 license) <https://github.com/chevrotain/chevrotain>
-* Icon theme by Font Awesome <https://fontawesome.com> (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
-* Default content by @OtisAlejandro (Seraphina character and lorebook) and @kallmeflocc (10K Discord Users Celebratory Background)
-* Docker guide by [@mrguymiah](https://github.com/mrguymiah) and [@Bronya-Rand](https://github.com/Bronya-Rand)
-* kokoro-js library by [@hexgrad](https://github.com/hexgrad) (Apache-2.0 License)
+```bash
+cd ios-app
+npm install          # if dependencies changed
+bash scripts/prepare-ios.sh
+# Then rebuild in Xcode
+```
 
-## Top Contributors
+### Key technical notes
 
-[![Contributors](https://contrib.rocks/image?repo=SillyTavern/SillyTavern)](https://github.com/SillyTavern/SillyTavern/graphs/contributors)
+- **SIGPIPE**: `process.stdout.write` and `process.stderr.write` are replaced with no-ops — nodejs-mobile's pipes have no reader and any write triggers SIGPIPE
+- **No ICU**: `Intl` is polyfilled in `server-ios.js` since nodejs-mobile has no ICU data
+- **No webpack at runtime**: `public/lib.js` must be pre-built (done by `prepare-ios.sh`)
+- **Xcode overwrites**: Always edit `nodejs-project/server-ios.js` and sync to `nodejs-project-deploy/` — Xcode reads from there
 
-<!-- LINK GROUP -->
-[cover]: https://github.com/user-attachments/assets/01a6ae9a-16aa-45f2-8bff-32b5dc587e44
-[discord-link]: https://discord.gg/sillytavern
-[discord-shield-badge]: https://img.shields.io/discord/1100685673633153084?color=5865F2&label=discord&labelColor=black&logo=discord&logoColor=white&style=for-the-badge
+See [ios-app/IOS-PORT.md](ios-app/IOS-PORT.md) for full technical documentation.
+
+---
+
+## Upstream SillyTavern
+
+This repo tracks [SillyTavern/SillyTavern](https://github.com/SillyTavern/SillyTavern). All original features and documentation apply.
+
+- **Docs:** <https://docs.sillytavern.app/>
+- **Discord:** <https://discord.gg/sillytavern>
+- **Reddit:** <https://reddit.com/r/SillyTavernAI>
+
+---
+
+## License
+
+AGPL-3.0 — see [LICENSE](LICENSE)
+
+iOS port additions are also AGPL-3.0.
+
