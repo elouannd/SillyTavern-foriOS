@@ -33,11 +33,60 @@ class SillyTavernViewController: CAPBridgeViewController, WKScriptMessageHandler
         NSLog("[ST-Swift] 📁 Check Documents/st-startup.log for Node.js output")
         super.viewDidLoad()
         NSLog("[ST-Swift] ▶️ super.viewDidLoad complete — showing overlay and polling")
+        extendWebViewEdgeToEdge()
         fixWebViewGesturesForSliders()
         setupJSErrorCapture()
         showLoadingOverlay()
         startPolling()
         startElapsedTimer()
+    }
+
+    // ── Edge-to-edge WebView ──────────────────────────────────────────────────
+    // By default Capacitor respects safe area insets, leaving black bars at the
+    // top and bottom. Since index.html already has viewport-fit=cover and ST's
+    // CSS can use env(safe-area-inset-*), we extend the WebView to fill the
+    // entire screen and inject CSS to pad the top toolbar and bottom input.
+    private func extendWebViewEdgeToEdge() {
+        // Remove additional safe area insets Capacitor may have set
+        additionalSafeAreaInsets = .zero
+
+        // Make WebView ignore safe area and fill the whole screen
+        guard let webView = bridge?.webView else { return }
+        webView.scrollView.contentInsetAdjustmentBehavior = .never
+
+        // Pin WebView to the view edges (not safe area)
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            webView.topAnchor.constraint(equalTo: view.topAnchor),
+            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
+
+        // Inject CSS that uses iOS safe-area-inset env vars to pad ST's UI
+        let safeAreaCSS = WKUserScript(source: """
+            document.addEventListener('DOMContentLoaded', function() {
+                var s = document.createElement('style');
+                s.textContent = `
+                    /* Push ST top bar below the status bar notch */
+                    #top-bar, .top-bar, #navigation-top {
+                        padding-top: env(safe-area-inset-top, 0px) !important;
+                    }
+                    /* Push ST bottom input above the home indicator */
+                    #send_form, #form_sheld, .form_sheld {
+                        padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+                    }
+                    /* Ensure body stretches to fill the viewport */
+                    body {
+                        padding-top: env(safe-area-inset-top, 0px);
+                        padding-bottom: env(safe-area-inset-bottom, 0px);
+                    }
+                `;
+                document.head.appendChild(s);
+            });
+        """, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+        webView.configuration.userContentController.addUserScript(safeAreaCSS)
+        NSLog("[ST-Swift] 📐 Edge-to-edge layout applied with safe-area CSS")
     }
 
     // ── Fix sliders (range inputs) ───────────────────────────────────────────
@@ -244,9 +293,7 @@ class SillyTavernViewController: CAPBridgeViewController, WKScriptMessageHandler
             self.elapsedSeconds += 1
             DispatchQueue.main.async {
                 let s = self.elapsedSeconds
-                if s < 10 {
-                    self.statusLabel?.text = "Starting local server…"
-                } else if s < 30 {
+                if s < 30 {
                     self.statusLabel?.text = "Starting local server… (\(s)s)"
                 } else if s < 90 {
                     self.statusLabel?.text = "Initialising data… (\(s)s)\nThis is normal on first launch."

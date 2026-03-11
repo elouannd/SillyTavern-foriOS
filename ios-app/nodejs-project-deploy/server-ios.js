@@ -64,8 +64,10 @@ const bundlePublicPath = _cfg.bundlePublicPath ?? null;
 const bundleServerRoot = _cfg.bundleServerRoot ?? null;
 
 // ── File logging ──────────────────────────────────────────────────────────────
-// Write directly to Documents root so it shows in Files app.
-const logPath = path.join(documentsBase, 'st-startup.log');
+// Write to Documents root with date-based filename so it shows in Files app.
+// Keep only the last 5 logs to avoid filling up storage.
+const logDate = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+const logPath = path.join(documentsBase, `st-startup-${logDate}.log`);
 const t0 = Date.now();
 const elapsed = () => `+${((Date.now() - t0) / 1000).toFixed(1)}s`;
 function log(msg) {
@@ -73,6 +75,17 @@ function log(msg) {
     try { fs.appendFileSync(logPath, line); } catch (_) {}
 }
 try { fs.writeFileSync(logPath, `--- st-startup.log @ ${new Date().toISOString()} ---\n`); } catch (_) {}
+
+// Clean up old logs — keep only the 5 most recent
+try {
+    const logFiles = fs.readdirSync(documentsBase)
+        .filter(f => f.startsWith('st-startup-') && f.endsWith('.log'))
+        .sort()
+        .reverse();
+    for (const old of logFiles.slice(5)) {
+        try { fs.unlinkSync(path.join(documentsBase, old)); } catch (_) {}
+    }
+} catch (_) {}
 
 // ── Neutralize stdout/stderr to prevent SIGPIPE ──────────────────────────────
 // On iOS/nodejs-mobile, stdout and stderr are pipes with no reader. Any write
