@@ -2,6 +2,44 @@
  * iOS entry point for SillyTavern running inside nodejs-mobile.
  */
 
+// ── Intl polyfill ─────────────────────────────────────────────────────────────
+// nodejs-mobile is compiled without ICU data, so the Intl global is missing.
+// SillyTavern uses Intl.Collator for natural sorting of characters/images.
+// Provide a minimal polyfill so those code paths don't crash.
+if (typeof globalThis.Intl === 'undefined') {
+    globalThis.Intl = {};
+}
+if (!globalThis.Intl.Collator) {
+    globalThis.Intl.Collator = function Collator(_locale, opts) {
+        // Support being called with or without `new`
+        const numeric = opts?.numeric ?? false;
+        const sensitivity = opts?.sensitivity ?? 'variant';
+        const instance = {
+            compare(a, b) {
+                a = String(a); b = String(b);
+                if (sensitivity === 'base' || sensitivity === 'accent') {
+                    a = a.toLowerCase(); b = b.toLowerCase();
+                }
+                if (numeric) {
+                    const ra = /^(\d+)/.exec(a), rb = /^(\d+)/.exec(b);
+                    if (ra && rb) {
+                        const diff = parseInt(ra[1]) - parseInt(rb[1]);
+                        if (diff !== 0) return diff;
+                    }
+                }
+                return a < b ? -1 : a > b ? 1 : 0;
+            },
+        };
+        // If called with new, return this; otherwise return the instance
+        if (new.target) { Object.assign(this, instance); this.compare = instance.compare; return this; }
+        return instance;
+    };
+}
+if (!globalThis.Intl.Segmenter) {
+    // Stub — some libraries check for Segmenter existence
+    globalThis.Intl.Segmenter = undefined;
+}
+
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';

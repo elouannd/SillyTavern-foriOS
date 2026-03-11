@@ -1,0 +1,20 @@
+{
+  "appId": "com.sillytavern.app",
+  "appName": "SillyTavern",
+  "webDir": "../public",
+  "server": {
+    "url": "http://localhost:8000",
+    "cleartext": true
+  },
+  "ios": {
+    "allowsLinkPreview": false,
+    "scrollEnabled": true,
+    "contentInset": "never"
+  },
+  "plugins": {
+    "CapacitorNodeJS": {
+      "nodeDir": "nodejs-project",
+      "startMode": "auto"
+    }
+  }
+}
