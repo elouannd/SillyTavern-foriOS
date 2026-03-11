@@ -10,29 +10,32 @@
 
 ## What is this?
 
-This fork ports SillyTavern to run natively on iPhone and iPad. The full Node.js backend runs on-device using [nodejs-mobile](https://github.com/nodejs-mobile/nodejs-mobile), so you can use SillyTavern anywhere — no Mac, no server, no Wi-Fi needed (as long as your AI API works).
-
+This fork ports SillyTavern to run natively on iPhone and iPad. The full Node.js backend runs on-device using [nodejs-mobile](https://github.com/nodejs-mobile/nodejs-mobile), so you can use SillyTavern anywhere 
 **Supported devices:** iPhone and iPad  
 **Minimum iOS:** 15.0  
-**SillyTavern version:** stays in sync with upstream
+**SillyTavern version:** currently 1.16
 
 ---
 
-## Features
+## Features and issues
 
 - ✅ Full SillyTavern experience on iOS
 - ✅ Runs entirely on-device — no external server
-- ✅ All AI APIs supported (OpenAI, Anthropic, Google, Mistral, local, etc.)
 - ✅ Character cards, lorebooks, presets — everything syncs to your Files app
 - ✅ Data persists in Files app → SillyTavern folder (accessible outside the app)
 - ⚠️ No JIT (Apple restriction) — slower than desktop, but fully functional
 - ⚠️ No local AI models (no transformers, captioning, TTS/STT)
+- ⚠️ No Extension support
+- ⚠️ Sliders don't work
+- ⚠️ First start may not launch Silly, force restart is required
+- ⚠️ Many other issues....
 
 ---
 
 ## For Users — Installing the App
 
-> You will need Xcode and an Apple ID (free) to sideload. A paid Apple Developer account ($99/yr) removes the 7-day re-signing requirement.
+> You will need a Mac, Xcode and an Apple ID (free) to sideload.
+> An IPA will be distributed later on to sideload using sidestore, altstore or sideloadldy 
 
 ### Prerequisites
 
