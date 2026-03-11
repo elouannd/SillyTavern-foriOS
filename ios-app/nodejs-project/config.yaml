@@ -1,0 +1,145 @@
+listen: false
+listenAddress:
+  ipv4: 127.0.0.1
+  ipv6: "[::1]"
+protocol:
+  ipv4: true
+  ipv6: false
+dnsPreferIPv6: false
+port: 8000
+heartbeatInterval: 0
+browserLaunch:
+  enabled: false
+  browser: default
+  hostname: auto
+  port: -1
+  avoidLocalhost: false
+ssl:
+  enabled: false
+  certPath: ""
+  keyPath: ""
+  keyPassphrase: ""
+disableCsrfProtection: true
+whitelistMode: false
+enableForwardedWhitelist: false
+whitelist:
+  - 127.0.0.1
+  - ::1
+basicAuthMode: false
+enableCorsProxy: false
+dataRoot: ./data
+memoryCacheCapacity: 50mb
+useDiskCache: false
+backups:
+  chat:
+    enabled: true
+    throttleInterval: 10000
+    checkIntegrity: true
+    maxTotalBackups: -1
+  numberOfBackups: 10
+  common:
+    numberOfBackups: 50
+extras:
+  enabled: false
+  autoConnect: false
+  url: ""
+whitelistDockerHosts: true
+basicAuthUser:
+  username: user
+  password: password
+cors:
+  enabled: true
+  origin:
+    - "null"
+  methods:
+    - OPTIONS
+  allowedHeaders: []
+  exposedHeaders: []
+  credentials: false
+  maxAge: null
+requestProxy:
+  enabled: false
+  url: socks5://username:password@example.com:1080
+  bypass:
+    - localhost
+    - 127.0.0.1
+enableUserAccounts: false
+enableDiscreetLogin: false
+perUserBasicAuth: false
+sso:
+  autheliaAuth: false
+  authentikAuth: false
+hostWhitelist:
+  enabled: false
+  scan: true
+  hosts: []
+sessionTimeout: -1
+securityOverride: false
+logging:
+  enableAccessLog: true
+  minLogLevel: 0
+rateLimiting:
+  preferRealIpHeader: false
+thumbnails:
+  enabled: true
+  format: jpg
+  quality: 95
+  dimensions:
+    bg:
+      - 160
+      - 90
+    avatar:
+      - 96
+      - 144
+    persona:
+      - 96
+      - 144
+performance:
+  lazyLoadCharacters: false
+  memoryCacheCapacity: 100mb
+  useDiskCache: true
+cacheBuster:
+  enabled: false
+  userAgentPattern: ""
+allowKeysExposure: false
+skipContentCheck: false
+whitelistImportDomains:
+  - localhost
+  - cdn.discordapp.com
+  - files.catbox.moe
+  - raw.githubusercontent.com
+requestOverrides: []
+extensions:
+  enabled: true
+  autoUpdate: true
+  models:
+    autoDownload: true
+    classification: Cohee/distilbert-base-uncased-go-emotions-onnx
+    captioning: Xenova/vit-gpt2-image-captioning
+    embedding: Cohee/jina-embeddings-v2-base-en
+    speechToText: Xenova/whisper-small
+    textToSpeech: Xenova/speecht5_tts
+enableDownloadableTokenizers: true
+promptPlaceholder: "[Start a new chat]"
+openai:
+  randomizeUserId: false
+  captionSystemPrompt: ""
+deepl:
+  formality: default
+mistral:
+  enablePrefix: false
+ollama:
+  keepAlive: -1
+  batchSize: -1
+claude:
+  enableSystemPromptCache: false
+  cachingAtDepth: -1
+  extendedTTL: false
+gemini:
+  apiVersion: v1beta
+  thoughtSignatures: true
+  enableSystemPromptCache: false
+  image:
+    personGeneration: allow_adult
+enableServerPlugins: false
+enableServerPluginsAutoUpdate: true

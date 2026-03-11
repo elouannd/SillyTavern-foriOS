@@ -1,0 +1,107 @@
+/**
+ * ios-overrides.css
+ * Mobile/iOS-specific CSS overrides for SillyTavern running inside nodejs-mobile.
+ * Loaded conditionally by index.html when the `st-ios` class is present on <body>.
+ * The class is added by ios-init.js on startup.
+ */
+
+/* ── Safe area insets (notch, home indicator) ─────────────────────────────── */
+body.st-ios {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    /* Prevent iOS rubber-band scroll on the body */
+    overscroll-behavior: none;
+}
+
+/* ── Prevent double-tap zoom on buttons and inputs ───────────────────────── */
+body.st-ios button,
+body.st-ios input,
+body.st-ios select,
+body.st-ios textarea,
+body.st-ios a {
+    touch-action: manipulation;
+}
+
+/* ── Chat input area — lift above virtual keyboard ───────────────────────── */
+body.st-ios #send_form {
+    padding-bottom: max(env(safe-area-inset-bottom), 8px);
+}
+
+/* ── Scrollable chat area — use momentum scrolling ───────────────────────── */
+body.st-ios #chat {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+}
+
+/* ── Sidebar drawers — ensure they clear the notch ───────────────────────── */
+body.st-ios #left-nav-panel,
+body.st-ios #right-nav-panel {
+    padding-top: max(env(safe-area-inset-top), 20px);
+}
+
+/* ── Increase minimum touch target sizes for small controls ──────────────── */
+body.st-ios .mes_buttons button,
+body.st-ios .extraMesButtons button {
+    min-width: 36px;
+    min-height: 36px;
+}
+
+/* ── Sliders — larger thumb for touch ────────────────────────────────────── */
+body.st-ios input[type="range"]::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+}
+
+/* ── Text inputs — prevent iOS auto-zoom on focus (font >= 16px) ─────────── */
+body.st-ios input[type="text"],
+body.st-ios input[type="password"],
+body.st-ios input[type="search"],
+body.st-ios input[type="email"],
+body.st-ios textarea,
+body.st-ios select {
+    font-size: max(16px, 1em);
+}
+
+/* ── Keyboard push-up: when virtual keyboard is open, shrink chat area ────── */
+@supports (height: 100dvh) {
+    body.st-ios {
+        height: 100dvh;
+    }
+    body.st-ios #chat {
+        max-height: calc(100dvh - 200px);
+    }
+}
+
+/* ── Disable hover states (causes sticky hover on touch screens) ─────────── */
+@media (hover: none) {
+    body.st-ios *:hover {
+        opacity: unset !important;
+    }
+}
+
+/* ── Remove text selection highlight on touch ────────────────────────────── */
+body.st-ios .mes_text {
+    -webkit-user-select: text;
+    user-select: text;
+}
+body.st-ios .avatar-container,
+body.st-ios .character_select,
+body.st-ios button {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* ── Status bar background (extends behind iOS status bar) ───────────────── */
+body.st-ios::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top);
+    background-color: var(--black80a, rgba(0,0,0,0.8));
+    z-index: 9999;
+    pointer-events: none;
+}
