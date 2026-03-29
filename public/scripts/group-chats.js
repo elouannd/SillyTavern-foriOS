@@ -86,6 +86,7 @@ import { isExternalMediaAllowed } from './chats.js';
 import { POPUP_TYPE, Popup, callGenericPopup } from './popup.js';
 import { t } from './i18n.js';
 import { accountStorage } from './util/AccountStorage.js';
+import { compressRequest } from './request-compression.js';
 
 export {
     selected_group,
@@ -173,9 +174,8 @@ async function regenerateGroup() {
         // for new generations after the update
         if ((generationId && this_generationId) && generationId !== this_generationId) {
             break;
-        }
-        // legacy for generations before the update
-        else if (lastMes.is_user || lastMes.is_system) {
+        } else if (lastMes.is_user || lastMes.is_system) {
+            // legacy for generations before the update
             break;
         }
 
@@ -184,7 +184,7 @@ async function regenerateGroup() {
 
     const abortController = new AbortController();
     setExternalAbortController(abortController);
-    generateGroupWrapper(false, 'normal', { signal: abortController.signal });
+    return generateGroupWrapper(false, 'normal', { signal: abortController.signal });
 }
 
 /**
@@ -392,8 +392,7 @@ export function findGroupMemberId(arg, full = false) {
         console.log(`Targeting group member ${chid} (${arg}) from search result`, result[0]);
 
         return !full ? chid : { ...{ id: chid }, ...result[0].item };
-    }
-    else {
+    } else {
         const memberAvatar = group.members[index];
 
         if (memberAvatar === undefined) {
@@ -635,11 +634,12 @@ async function saveGroupChat(groupId, shouldSaveGroup, force = false) {
         user_name: 'unused',
         character_name: 'unused',
     };
-    const response = await fetch('/api/chats/group/save', {
+    const saveGroupChatRequest = await compressRequest({
         method: 'POST',
         headers: getRequestHeaders(),
         body: JSON.stringify({ id: chatId, chat: [chatHeader, ...chat], force: force }),
     });
+    const response = await fetch('/api/chats/group/save', saveGroupChatRequest);
 
     if (!response.ok) {
         const errorData = await response.json();
@@ -730,11 +730,12 @@ export async function renameGroupMember(oldAvatar, newAvatar, newName) {
                     if (hadChanges) {
                         await eventSource.emit(event_types.CHARACTER_RENAMED_IN_PAST_CHAT, messages, oldAvatar, newAvatar);
 
-                        const saveChatResponse = await fetch('/api/chats/group/save', {
+                        const saveChatRequest = await compressRequest({
                             method: 'POST',
                             headers: getRequestHeaders(),
                             body: JSON.stringify({ id: chatId, chat: [...messages] }),
                         });
+                        const saveChatResponse = await fetch('/api/chats/group/save', saveChatRequest);
 
                         if (!saveChatResponse.ok) {
                             throw new Error('Group member could not be renamed');
@@ -744,8 +745,7 @@ export async function renameGroupMember(oldAvatar, newAvatar, newName) {
                     }
                 }
             }
-        }
-        catch (error) {
+        } catch (error) {
             console.log(`An error during renaming the character ${newName} in group: ${group.name}`);
             console.error(error);
         }
@@ -1011,28 +1011,22 @@ async function generateGroupWrapper(byAutoMode, type = null, params = {}) {
             if (activatedMembers.length === 0) {
                 activatedMembers = activateListOrder(group.members.slice(0, 1));
             }
-        }
-        else if (type === 'swipe' || type === 'continue') {
+        } else if (type === 'swipe' || type === 'continue') {
             activatedMembers = activateSwipe(group.members, { allowSystem: false });
 
             if (activatedMembers.length === 0) {
                 toastr.warning(t`Deleted group member swiped. To get a reply, add them back to the group.`);
                 throw new Error('Deleted group member swiped');
             }
-        }
-        else if (type === 'impersonate') {
+        } else if (type === 'impersonate') {
             activatedMembers = activateImpersonate(group.members);
-        }
-        else if (activationStrategy === group_activation_strategy.NATURAL) {
+        } else if (activationStrategy === group_activation_strategy.NATURAL) {
             activatedMembers = activateNaturalOrder(enabledMembers, activationText, lastMessage, group.allow_self_responses, isUserInput);
-        }
-        else if (activationStrategy === group_activation_strategy.LIST) {
+        } else if (activationStrategy === group_activation_strategy.LIST) {
             activatedMembers = activateListOrder(enabledMembers);
-        }
-        else if (activationStrategy === group_activation_strategy.POOLED) {
+        } else if (activationStrategy === group_activation_strategy.POOLED) {
             activatedMembers = activatePooledOrder(enabledMembers, lastMessage, isUserInput);
-        }
-        else if (activationStrategy === group_activation_strategy.MANUAL && !isUserInput) {
+        } else if (activationStrategy === group_activation_strategy.MANUAL && !isUserInput) {
             activatedMembers = shuffle(enabledMembers).slice(0, 1).map(x => characters.findIndex(y => y.avatar === x)).filter(x => x !== -1);
         }
 
@@ -1168,8 +1162,7 @@ function activateSwipe(members, { allowSystem = false } = {}) {
                 break;
             }
         }
-    }
-    else {
+    } else {
         activatedNames.push(lastMessage.original_avatar);
     }
 
@@ -1704,8 +1697,7 @@ function getGroupCharacterBlock(character) {
     const auxFieldValue = (character.data && character.data[auxFieldName]) || '';
     if (auxFieldValue) {
         template.find('.character_version').text(auxFieldValue);
-    }
-    else {
+    } else {
         template.find('.character_version').hide();
     }
 
@@ -1875,8 +1867,7 @@ function select_group_chats(groupId, skipAnimation) {
     if (group) {
         $('#rm_group_automode_label').show();
         $('#rm_button_selected_ch').children('h2').text(groupName);
-    }
-    else {
+    } else {
         $('#rm_group_automode_label').hide();
     }
 
@@ -2361,9 +2352,10 @@ export async function importGroupChat(formData, { refresh = true } = {}) {
  * @param {string} name Name of the chat to save
  * @param {ChatMetadata?} metadata New metadata to save with the chat
  * @param {number|undefined} mesId Optional message ID to trim the chat up to
+ * @param {ChatMessage[]|undefined} chatData Optional chat snapshot to save instead of the current in-memory chat
  * @returns {Promise<void>} Promise that resolves when the group chat is saved
  */
-export async function saveGroupBookmarkChat(groupId, name, metadata, mesId) {
+export async function saveGroupBookmarkChat(groupId, name, metadata, mesId, chatData = undefined) {
     const group = groups.find(x => x.id === groupId);
 
     if (!group) {
@@ -2380,17 +2372,20 @@ export async function saveGroupBookmarkChat(groupId, name, metadata, mesId) {
     };
 
     /** @type {ChatMessage[]} */
-    const trimmedChat = (mesId !== undefined && mesId >= 0 && mesId < chat.length)
-        ? chat.slice(0, Number(mesId) + 1)
-        : chat;
+    const trimmedChat = Array.isArray(chatData)
+        ? chatData
+        : (mesId !== undefined && mesId >= 0 && mesId < chat.length)
+            ? chat.slice(0, Number(mesId) + 1)
+            : chat;
 
     await editGroup(groupId, true, false);
 
-    const response = await fetch('/api/chats/group/save', {
+    const saveChatRequest = await compressRequest({
         method: 'POST',
         headers: getRequestHeaders(),
         body: JSON.stringify({ id: name, chat: [chatHeader, ...trimmedChat] }),
     });
+    const response = await fetch('/api/chats/group/save', saveChatRequest);
 
     if (!response.ok) {
         toastr.error(t`Check the server connection and reload the page to prevent data loss.`, t`Group chat could not be saved`);
@@ -2477,7 +2472,6 @@ jQuery(() => {
         const value = $(this).prop('checked');
         hideMutedSprites = value;
         onHideMutedSpritesClick(value);
-
     });
     $('#send_textarea').on('keyup', onSendTextareaInput);
     $('#groupCurrentMemberPopoutButton').on('click', doCurMemberListPopout);

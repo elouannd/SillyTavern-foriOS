@@ -111,7 +111,6 @@ router.post('/get', async (request, response) => {
 
     try {
         if (fs.existsSync(folderPath) && fs.statSync(folderPath).isDirectory()) {
-
             ensureFoldersExist(request.user.directories);
 
             const folders = fs.readdirSync(folderPath, { withFileTypes: true })
@@ -174,8 +173,7 @@ router.post('/get', async (request, response) => {
                 }
             }
         }
-    }
-    catch (err) {
+    } catch (err) {
         console.error(err);
     }
     return response.send(output);
@@ -234,9 +232,7 @@ router.post('/download', async (request, response) => {
         const destination = path.resolve(temp_path);
         // Delete if previous download failed
         if (fs.existsSync(temp_path)) {
-            fs.unlink(temp_path, (err) => {
-                if (err) throw err;
-            });
+            await fs.promises.unlink(temp_path);
         }
         const fileStream = fs.createWriteStream(destination, { flags: 'wx' });
         // @ts-ignore
@@ -256,8 +252,7 @@ router.post('/download', async (request, response) => {
         fs.copyFileSync(temp_path, file_path);
         fs.unlinkSync(temp_path);
         response.sendStatus(200);
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error);
         response.sendStatus(500);
     }
@@ -294,23 +289,17 @@ router.post('/delete', async (request, response) => {
     console.info('Request received to delete', category, file_path);
 
     try {
-        // Delete if previous download failed
-        if (fs.existsSync(file_path)) {
-            fs.unlink(file_path, (err) => {
-                if (err) throw err;
-            });
-            console.info('Asset deleted.');
-        }
-        else {
+        if (!fs.existsSync(file_path)) {
             console.error('Asset not found.');
-            response.sendStatus(400);
+            return response.sendStatus(400);
         }
-        // Move into asset place
-        response.sendStatus(200);
-    }
-    catch (error) {
+
+        await fs.promises.unlink(file_path);
+        console.info('Asset deleted.');
+        return response.sendStatus(200);
+    } catch (error) {
         console.error(error);
-        response.sendStatus(500);
+        return response.sendStatus(500);
     }
 });
 
@@ -346,7 +335,6 @@ router.post('/character', async (request, response) => {
     let output = [];
     try {
         if (fs.existsSync(folderPath) && fs.statSync(folderPath).isDirectory()) {
-
             // Live2d assets
             if (category == 'live2d') {
                 const folders = fs.readdirSync(folderPath, { withFileTypes: true });
@@ -374,8 +362,7 @@ router.post('/character', async (request, response) => {
                 output.push(`/characters/${name}/${category}/${i}`);
         }
         return response.send(output);
-    }
-    catch (err) {
+    } catch (err) {
         console.error(err);
         return response.sendStatus(500);
     }
