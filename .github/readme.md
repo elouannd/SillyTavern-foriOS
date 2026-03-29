@@ -1,6 +1,6 @@
-# SillyTavern for iOS
+# SillyTavern for iOS — Run SillyTavern on iPhone & iPad
 
-> A fork of [SillyTavern](https://github.com/SillyTavern/SillyTavern) with a full native iOS port — runs the complete SillyTavern backend **on-device**, no server required.
+> A fork of [SillyTavern](https://github.com/SillyTavern/SillyTavern) with a full native iOS port — runs the complete SillyTavern backend **on-device**, no server required. Use SillyTavern on your iPhone or iPad without a PC, a VPN, or a remote server.
 
 [![iOS 15+](https://img.shields.io/badge/iOS-15%2B-blue?logo=apple)](ios-app/)
 [![Node.js 18](https://img.shields.io/badge/Node.js-18-green?logo=node.js)](ios-app/nodejs-project/)
@@ -8,34 +8,51 @@
 
 ---
 
-## What is this?
+## What is SillyTavern for iOS?
 
-This fork ports SillyTavern to run natively on iPhone and iPad. The full Node.js backend runs on-device using [nodejs-mobile](https://github.com/nodejs-mobile/nodejs-mobile), so you can use SillyTavern anywhere 
+**SillyTavern for iOS** lets you run the full SillyTavern experience natively on your **iPhone or iPad** — no Mac staying on, no external server, no cloud. The complete Node.js backend runs entirely on-device using [nodejs-mobile](https://github.com/nodejs-mobile/nodejs-mobile).
+
+This is the only open-source iOS port of SillyTavern that runs the **full backend on-device**. Connect to any remote LLM API (OpenAI, Claude, OpenRouter, Kobold, etc.) directly from your iPhone.
+
 **Supported devices:** iPhone and iPad  
 **Minimum iOS:** 15.0  
 **SillyTavern version:** currently 1.16
 
 ---
 
-## Features and issues
+## Why use this instead of other options?
 
-- ✅ Full SillyTavern experience on iOS
-- ✅ Runs entirely on-device — no external server
+| | SillyTavern for iOS | Browser (remote server) | Other iOS apps |
+|---|---|---|---|
+| Full SillyTavern UI | ✅ | ✅ | ❌ |
+| Runs on-device | ✅ | ❌ | varies |
+| No server needed | ✅ | ❌ | ✅ |
+| Open source | ✅ | — | rarely |
+| Character cards & lorebooks | ✅ | ✅ | ❌ |
+| Free | ✅ | depends | often paid |
+
+---
+
+## Features
+
+- ✅ Full SillyTavern experience on iOS — same UI as desktop
+- ✅ Runs entirely on-device — no external server, no Wi-Fi dependency
 - ✅ Character cards, lorebooks, presets — everything syncs to your Files app
 - ✅ Data persists in Files app → SillyTavern folder (accessible outside the app)
+- ✅ Works with any remote LLM API: OpenAI, Anthropic Claude, OpenRouter, KoboldAI, Ollama...
 - ⚠️ No JIT (Apple restriction) — slower than desktop, but fully functional
 - ⚠️ No local AI models (no transformers, captioning, TTS/STT)
 - ⚠️ No Extension support
 - ⚠️ Sliders don't work
-- ⚠️ First start may not launch Silly, force restart is required
-- ⚠️ Many other issues....
+- ⚠️ First start may not launch — force restart may be required
+- ⚠️ Many other known issues
 
 ---
 
-## For Users — Installing the App
+## Installing SillyTavern on iPhone or iPad
 
-> You will need a Mac, Xcode and an Apple ID (free) to sideload.
-> An IPA will be distributed later on to sideload using sidestore, altstore or sideloadldy 
+> You will need a Mac, Xcode, and an Apple ID (free) to sideload.  
+> An IPA will be distributed later for use with SideStore, AltStore, or Sideloadly.
 
 ### Prerequisites
 
@@ -64,6 +81,28 @@ Then in Xcode:
 3. Hit **Run** (▶)
 
 **First launch is slow** — Node.js parses a 14MB bundle without JIT. Budget 1–3 minutes. Subsequent launches are fast (~1–2s).
+
+---
+
+## Frequently Asked Questions
+
+**Can I use SillyTavern on iPhone without a computer running?**  
+Yes — that's the whole point of this port. The Node.js server runs directly on your iPhone using nodejs-mobile. No PC or Mac needs to stay on.
+
+**Does it support local AI models on iPhone?**  
+Not yet. Local model inference (transformers, llama.cpp, etc.) is blocked by Apple's no-JIT policy. You can still connect to any remote API like OpenRouter, OpenAI, or a home server.
+
+**Is this available on the App Store?**  
+No. Due to Apple's policies on sideloading and AI apps, this must be sideloaded via Xcode or AltStore/SideStore. An IPA release is planned.
+
+**What LLM APIs work with this?**  
+Any API supported by SillyTavern works: OpenAI, Anthropic Claude, OpenRouter, KoboldAI, TabbyAPI, Ollama (remote), and more.
+
+**Is this different from NativeTavern or MiniTavern?**  
+Yes. This is a direct port of the full upstream SillyTavern codebase, running the actual Node.js backend on-device. It is not a rewrite or a simplified client.
+
+**What iOS version do I need?**  
+iOS 15.0 or later.
 
 ---
 
@@ -131,4 +170,3 @@ This repo tracks [SillyTavern/SillyTavern](https://github.com/SillyTavern/SillyT
 AGPL-3.0 — see [LICENSE](LICENSE)
 
 iOS port additions are also AGPL-3.0.
-
