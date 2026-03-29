@@ -106,11 +106,11 @@ echo "   ✅ Slim deploy directory built"
 echo ""
 
 # ── Step 3: Patch @choreruiz/capacitor-node-js Package.swift version ─────────
-# The plugin pins capacitor-swift-pm at 8.1.0 but Capacitor 8.2 requires 8.2.0.
+# The plugin pins capacitor-swift-pm at 8.1.0 but Capacitor 8.3 requires 8.3.0.
 PLUGIN_PKG="$IOS_APP_DIR/node_modules/@choreruiz/capacitor-node-js/Package.swift"
 if [ -f "$PLUGIN_PKG" ]; then
-    sed -i '' 's/exact: "8.1.0"/exact: "8.2.0"/g' "$PLUGIN_PKG"
-    echo "   🔧 Patched @choreruiz/capacitor-node-js Package.swift → capacitor-swift-pm 8.2.0"
+    sed -i '' 's/exact: "8\.[12]\.0"/exact: "8.3.0"/g' "$PLUGIN_PKG"
+    echo "   🔧 Patched @choreruiz/capacitor-node-js Package.swift → capacitor-swift-pm 8.3.0"
 fi
 echo ""
 
