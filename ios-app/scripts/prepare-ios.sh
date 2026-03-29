@@ -133,7 +133,7 @@ cd "$REPO_ROOT"
 node --input-type=module -e "
 import getPublicLibConfig from './webpack.config.js';
 import webpack from 'webpack';
-const config = getPublicLibConfig(true);
+const config = getPublicLibConfig({ forceDist: true });
 const compiler = webpack(config);
 compiler.run((err, stats) => {
     if (err) { console.error(err); process.exit(1); }

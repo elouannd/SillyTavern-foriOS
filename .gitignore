@@ -58,3 +58,9 @@ public/scripts/extensions/third-party
 yarn.lock
 *.code-workspace
 test-results/
+
+# Dotfiles and dotdirectories
+.*
+!.github
+!.gitignore
+!.gitattributes
